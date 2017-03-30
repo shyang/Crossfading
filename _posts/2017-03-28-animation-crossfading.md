@@ -127,5 +127,4 @@ world.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresiz
 [self.view addSubview:world];
 // UI End
 ```
-Autoresizing mask 的能力弱于 auto layout，虽能解决大部分布局问题（特别是与 parentView 之间），但 subviews 之间的相对关系不容易控制。
-
+Autoresizing mask 的能力弱于 auto layout，虽能解决大部分布局问题（特别是与 parentView 之间），但 subviews 之间的间隔也是等比例缩放的，不能保证初始的固定间隔。如果正好需要同比例缩放，可继续使用 autoresizingMask，否则就要 NSLayoutConstraint。
