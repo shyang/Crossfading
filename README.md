@@ -4,106 +4,17 @@ title:  "两个 View 之间淡入淡出过渡动画的实现"
 date:   2017-03-28
 ---
 
-参考：[Crossfading Two Views](https://developer.android.com/training/animation/crossfade.html)
+参考：[Crossfading Two Views](https://developer.android.com/training/animation/reveal-or-hide-view#Crossfade)
 
 关键代码：对 alpha 属性进行变化。
 
-### Android 版
+-[Android 版](android/app/src/main/java/org/un/crossfading/MainActivity.java)
 
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello!"
-        android:id="@+id/hello"
-        android:layout_gravity="center" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="World!"
-        android:id="@+id/world"
-        android:alpha="0"
-        android:layout_gravity="center" />
-
-</FrameLayout>
-```
-
-```java
-@Override
-public boolean onCreateOptionsMenu(Menu menu) {
-    menu.add("Go").setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM).setOnMenuItemClickListener((MenuItem item) -> {
-        item.setEnabled(false);
-
-        View hello = findViewById(R.id.hello);
-        View world = findViewById(R.id.world);
-
-        hello.animate().alpha(1 - hello.getAlpha()).setDuration(2000);
-        world.animate().alpha(1 - world.getAlpha()).setDuration(2000).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                item.setEnabled(true);
-            }
-        });
-
-        return true;
-    });
-    return super.onCreateOptionsMenu(menu);
-}
-```
 
 核心方法 `aView.animate() -> ViewPropertyAnimator`
 
-### iOS 版
+-[iOS 版](ios/Crossfading/ViewController.m)
 
-```objc
-- (void)viewDidLoad {
-    [super viewDidLoad];
-
-    self.view.backgroundColor = [UIColor whiteColor];
-
-    // UI Begin
-    UILabel *hello = [[UILabel alloc] init];
-    hello.text = @"Hello!";
-    hello.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.view addSubview:hello];
-
-    UILabel *world = [[UILabel alloc] init];
-    world.text = @"World!";
-    world.alpha = 0;
-    world.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.view addSubview:world];
-
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:hello attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:hello attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:world attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:world attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
-    // UI End
-
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Go" style:UIBarButtonItemStylePlain target:self action:@selector(onItemSelected)];
-    hello.tag = 100; // 在 demo 中较为简洁
-    world.tag = 200;
-}
-
-- (void)onItemSelected {
-    UIView *hello = [self.view viewWithTag:100];
-    UIView *world = [self.view viewWithTag:200];
-
-    self.navigationItem.rightBarButtonItem.enabled = NO;
-    [UIView animateWithDuration:1 animations:^{
-        hello.alpha = 1 - hello.alpha;
-        world.alpha = 1 - world.alpha;
-    } completion:^(BOOL finished) {
-        self.navigationItem.rightBarButtonItem.enabled = YES;
-    }];
-}
-```
 核心代码 `[UIView animateWithDuration:duration animations:^{}]`
 
 #### P.S.
